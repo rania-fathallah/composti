@@ -1,0 +1,144 @@
+{% extends 'composteur/dashboard.html' %}{% block user %}{% load static %}
+<nav
+  class="border border-success navbar navbar-main navbar-expand-lg mt-4 px-0 mx-4 shadow-success border-radius-xl"
+  id="navbarBlur"
+  data-scroll="true">
+  <div class="container-fluid py-1 px-3">
+    <ul class="navbar-nav justify-content-end">
+      <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+        <a
+          href="javascript:;"
+          class="nav-link text-body p-0"
+          id="iconNavbarSidenav"
+        >
+          <div class="sidenav-toggler-inner">
+            <i class="sidenav-toggler-line"></i>
+            <i class="sidenav-toggler-line"></i>
+            <i class="sidenav-toggler-line"></i>
+          </div>
+        </a>
+      </li>
+      <li class="nav-item px-3 d-flex align-items-center">
+        {% if user.image %}
+        <img
+          src="{{ user.image.url }}"
+          class="img-profile rounded-circle w-20"
+          style="height: 50px"
+        />
+        {% else %}
+        <img
+          src="{% static 'images/profil.png' %}"
+          class="img-profile rounded-circle"
+          style="height: 50px; width: 50px"
+        />
+        {% endif %}
+        <h5>{{ user.prenom }} {{ user.nom }}</h5>
+      </li>
+    </ul>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+        <li class="breadcrumb-item text-sm">
+          <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
+        </li>
+        <li
+          class="breadcrumb-item text-sm text-dark active"
+          aria-current="page"
+        >
+          Gestion des deshets recus
+        </li>
+      </ol>
+    </nav>
+  </div>
+</nav>
+<div class=" container-fluid w-auto h-auto px-2 px-md-4 mb-3">
+    <div
+      class="page-header min-height-300 border-radius-xl mt-4"
+      style="
+        background-image: url('https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+      ">
+      <span class="mask bg-gradient-success opacity-6"></span>
+    </div>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="card card-body mx-3 mx-md-4 mt-n10 border border-success">
+        <div class="row gx-4 mb-2">
+          <div class="my-auto">
+                <div
+                  class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                  <div
+                    class="bg-gradient-success shadow-success border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">
+                      Tableau de gestion des transaction des deshets recus
+                    </h6>
+                  </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                  <div class="table-responsive p-0">
+                    <table class="table align-items-center mb-0">
+                      <thead>
+                        <tr>
+                          <th
+                            class="font-weight-bolder"
+                          >
+                            ID
+                          </th>
+                          <th
+                            class="font-weight-bolder"
+                          >
+                            GREENEUR
+                          </th>
+                          <th
+                            class="font-weight-bolder"
+                          >
+                          DATE
+                          </th>
+                          <th class="font-weight-bolder">CONSULTER </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for project in Transaction %}
+                        <tr>
+                          <td>
+                            <div class="d-flex px-2 py-1">
+                              <div
+                                class="d-flex flex-column justify-content-center"
+                              >
+                                <h4 class="mb-0">{{project.id}}</h4>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <div class="d-flex px-2 py-1">
+                              <div
+                                class="d-flex flex-column justify-content-center"
+                              >
+                                <h4 class="mb-0">{{project.pseudo_G.nom}} {{project.pseudo_G.prenom}}</h4>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <h4 class="text-x font-weight-bold mb-0">
+                              {{project.timestamp}}
+                            </h4>
+                          </td>
+                          <td class="text-center">
+                            <h6 class="badge bg-gradient-success">
+                              <a
+                                type="button"
+                                href="{% url 'inspecter' pseudo project.id %}"
+                                >consulter</a
+                              >
+                            </h6>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}

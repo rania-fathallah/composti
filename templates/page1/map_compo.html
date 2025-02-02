@@ -1,0 +1,102 @@
+{% extends 'page1/base.html' %} {% block content %}
+<form method="POST" id="map1">
+  {% csrf_token %}
+  <div class="text-center mt-4"style="color: whitesmoke">
+    <h1 style="color:{% if form.latitude.errors %}red{% endif %}">
+      Choisir votre position{% if form.pseudo.errors %}<strong
+      class="text-danger"
+      role="alert"
+      >{{ form.pseudo.errors}}</strong
+    >{% endif %}
+    </h1>
+    <div
+      class="container w-75 position-relative mt-2 d-flex justify-content-center"
+      id="map"
+      style="height: 500px"
+    >
+      <div
+        class="arrows align-items-center text-center position-absolute"
+        style="z-index: 1000"
+      >
+        <h4 style="color: black">
+          latitude:{{ form.latitude }} longitude:{{ form.longitude}}
+          <button class="btn btn-outline-primary" id="ajouter">Afficher</button>
+        </h4>
+      </div>
+    </div>
+    <br />
+    <button
+      class="btn btn-outline-primary my-2 my-sm-0 w-25"
+      type="submit"
+      value="save"
+    >
+      envoyer
+    </button>
+  </div>
+</form>
+<script>
+  const ajouter = document.getElementById("ajouter");
+
+  var map = L.map("map", { doubleClickZoom: false }).setView([19, -12], 2);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    minZoom: 2,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+  }).addTo(map);
+
+  var marker;
+
+  // Get the input values for latitude and longitude
+  var lat;
+  var lng;
+  // Add an event listener to the button with ID "ajouter"
+  ajouter.addEventListener("click", function (event) {
+    lat = document.getElementById("lat").value;
+    lng = document.getElementById("lng").value;
+    // If marker is already defined, update its position
+    if (marker) {
+      marker.setLatLng([lat, lng]);
+    } else {
+      // Add new marker at clicked location
+      marker = L.marker([lat, lng], { draggable: true });
+      addTo(map); // setLatLng takes an array of coordinates
+    }
+    // Update the input values with the new latitude and longitude
+    document.getElementById("lat").value = lat;
+    document.getElementById("lng").value = lng;
+
+    // Add an event listener to the marker for when it is dragged
+    marker.on("dragend", function (e) {
+      var marker = e.target;
+      var position = marker.getLatLng();
+      // Update the input values with the new latitude and longitude
+      document.getElementById("lat").value = position.lat;
+      document.getElementById("lng").value = position.lng;
+      console.log(document.getElementById("lng").value);
+    });
+  });
+  map.on("dblclick", function (e) {
+    // If marker is already defined, update its position
+    if (marker) {
+      marker.setLatLng(e.latlng);
+    } else {
+      // Add new marker at clicked location
+      marker = L.marker(e.latlng, { draggable: true });
+      marker.addTo(map);
+    }
+
+    document.getElementById("lat").value = e.latlng.lat;
+    document.getElementById("lng").value = e.latlng.lng;
+
+    marker.on("dragend", function (e) {
+      var marker = e.target;
+      var position = marker.getLatLng();
+
+      document.getElementById("lat").value = position.lat;
+      document.getElementById("lng").value = position.lng;
+      console.log(document.getElementById("lng").value);
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,234 @@
+{% extends 'composteur/dashboard.html' %}{% block user %}{% load static %}
+<nav
+class="navbar navbar-main navbar-expand-lg mt-4 px-0 mx-4 shadow-success border-radius-xl"
+id="navbarBlur"
+data-scroll="true"
+>
+<div class="container-fluid py-1 px-3">
+  <ul class="navbar-nav justify-content-end">
+    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+      <a
+        href="javascript:;"
+        class="nav-link text-body p-0"
+        id="iconNavbarSidenav"
+      >
+        <div class="sidenav-toggler-inner">
+          <i class="sidenav-toggler-line"></i>
+          <i class="sidenav-toggler-line"></i>
+          <i class="sidenav-toggler-line"></i>
+        </div>
+      </a>
+    </li>
+    <li class="nav-item px-3 d-flex align-items-center">
+      {% if user.image %}
+      <img
+        src="{{ user.image.url }}"
+        class="img-profile rounded-circle w-20"
+        style="height: 50px"
+      />
+      {% else %}
+      <img
+        src="{% static 'images/profil.png' %}"
+        class="img-profile rounded-circle"
+        style="height: 50px; width: 50px"
+      />
+      {% endif %}
+      <h5>{{ user.prenom }} {{ user.nom }}</h5>
+    </li>
+  </ul>
+  <nav aria-label="breadcrumb">
+    <ol
+      class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5"
+    >
+      <li class="breadcrumb-item text-sm">
+        <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
+      </li>
+      <li
+        class="breadcrumb-item text-sm text-dark active"
+        aria-current="page"
+      >
+        Profil
+      </li>
+    </ol>
+  </nav>
+</div>
+</nav>
+<div class="container-fluid w-auto h-auto px-2 px-md-4 mb-3">
+  <div
+    class="page-header min-height-300 border-radius-xl mt-4"
+    style="
+      background-image: url('https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+    "
+  >
+    <span class="mask bg-gradient-success opacity-6"></span>
+    
+    <form
+      method="POST"
+      class="mx-0 mx-md-6 mt-5"
+      enctype="multipart/form-data"
+    >
+      {% csrf_token %}
+      <div class="main-body">
+        <div class="row row-cols-0 row-cols-md-2 g-2 text-center">
+          <div class="col">
+            <div class="card shadow-success border border-success mb-3">
+              <div class="card-body text-center">
+                {% if user.image %}
+                <img
+                  src="{{ user.image.url }}"
+                  class="rounded-circle mb-4"
+                  width="200"
+                  alt="profile picture"
+                  id="img"
+                />
+                {% else %}
+                <img
+                  src="{% static 'images/profil.png' %}"
+                  class="rounded-circle mb-4"
+                  width="200"
+                  alt="profile picture"
+                  id="img"
+                />
+                {% endif %} {% csrf_token %}
+                <input
+                  type="file"
+                  accept="image/png, image/jpeg"
+                  name="image"
+                  id="putimg"
+                />
+                <h1 class="mb-1">{{ user.prenom }} {{ user.nom }}</h1>
+                <p class="text-muted mb-2">COMPOSTEUR</p>
+              </div>
+            </div>
+            <div class="card mt-3 shadow-success border border-success mb-3">
+              <ul class="list-group list-group-flush">
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center flex-wrap border border-success mb-3"
+                >
+                  <h3>Address</h3>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center flex-wrap"
+                >
+                  <div
+                    id="maped"
+                    class="container maps"
+                    style="height: 270px"
+                  >
+                    <input type="hidden" id="lat" name="lat" />
+                    <input type="hidden" id="lng" name="lng" />
+                  </div>
+                  <br />
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col">
+            <div
+              class="card mb-3 w-auto h-auto shadow-success border border-success mb-3"
+            >
+              <div class="card-body text-center">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label for="inputNom"><h4>Nom :</h4></label>
+                  </div>
+                  {{ form.nom}} {% if form.nom.errors %}
+                  <strong class="text-danger" role="alert"
+                    >{{ form.nom.errors }}</strong
+                  >
+                  {% endif %}
+                </div>
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label for="inputPrenom"><h4>Prénom:</h4> </label>
+                  </div>
+                  {{ form.prenom}} {% if form.prenom.errors %}
+                  <strong class="text-danger" role="alert"
+                    >{{ form.prenom.errors }}</strong
+                  >
+                  {% endif %}
+                </div>
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label for="inputPseudo"><h4>Pseudo:</h4></label>
+                  </div>
+                  <input
+                    type="text"
+                    class="form-control border border-success mb-3 h3"
+                    value="{{ user.pseudo_C }}"
+                    readonly
+                  />
+                </div>
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label for="inputEmail"><h4>Email:</h4></label>
+                  </div>
+                  <input
+                    type="Email"
+                    class="form-control border border-success mb-3 h3"
+                    value="{{ user.e_mail }}"
+                    readonly
+                  />
+                </div>
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label for="inputPhone"><h4>Téléphone:</h4></label>
+                  </div>
+                  {{ form.telephone}} {% if form.telephone.errors %}
+                  <strong class="text-danger" role="alert"
+                    >{{ form.telephone.errors }}</strong
+                  >
+                  {% endif %}
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-12 text-center">
+                    <button
+                      type="submit"
+                      class="btn btn-outline-success my-2 my-sm-0 h4"
+                    >
+                      Enregistrer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  document.getElementById("prenom").value = "{{ user.prenom }}";
+  document.getElementById("nom").value = "{{ user.nom }}";
+  document.getElementById("NB_GSM").value = "{{ user.NB_GSM }}";
+
+  marker = L.marker([{{ user.position.y|stringformat:".1000f" }},{{ user.position.x|stringformat:".1000f" }}])
+  var map = L.map("maped", { doubleClickZoom: false }).setView(
+    marker.getLatLng(),10
+  );
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    minZoom: 2,
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  }).addTo(map);
+  marker.addTo(map);
+  map.on("click", function (e) {
+    // If marker is already defined, remove it before adding a new one
+    if (marker) {
+      map.removeLayer(marker);
+    }
+    // Add new marker at double-clicked location
+    marker = L.marker(e.latlng).addTo(map);
+
+    document.getElementById("lat").value = e.latlng.lat;
+    document.getElementById("lng").value = e.latlng.lng;
+  });
+  const image = document.getElementById("img");
+  const input = document.getElementById("putimg");
+  input.addEventListener("change", () => {
+    image.src = URL.createObjectURL(input.files[0]);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,347 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="{% static 'images\téléchargement.png' %}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{% static 'images\téléchargement.png' %}"
+    />
+    <title>COMPOSTEUR</title>
+    <!-- CSS Files -->
+    <link
+      rel="stylesheet"
+      href="{% static 'bootstrap-5.2.3-dist/css/bootstrap.css' %}"
+    />
+    <link
+      id="pagestyle"
+      href="{% static 'css/material-dashboard.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+      crossorigin=""
+    ></script>
+  </head>
+  <body class="g-sidenav-show bg-gray-200">
+    <div class="overflow-hidden">
+      <aside
+        class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-success"
+        id="sidenav-main"
+      >
+        <div class="sidenav-header">
+          <i
+            class="bi bi-x-lg p-3 cursor-pointer text-white position-absolute end-0 top-0 d-none d-xl-none h4"
+            aria-hidden="true"
+            id="iconSidenav"
+          ></i>
+          <a class="navbar-brand m-0">
+            <img
+              src="{% static 'images\téléchargement.png' %}"
+              class="navbar-brand-img h-100"
+            />
+            <span class="ms-1 font-weight-bold text-white h5">COMPOSTEUR</span>
+          </a>
+        </div>
+        <hr class="horizontal light mt-0 mb-2" />
+        <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a
+                class="nav-link text-white"
+                href="{% url 'compodash' pseudo %}"
+              >
+                <div
+                  class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+                >
+                  <i class="bi bi-tv text-white h4"></i>
+                </div>
+                <span class="nav-link-text ms-1 text-white h4">Dashboard</span>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="nav-link text-white"
+                href="{% url 'compostore' pseudo %}"
+              >
+                <div
+                  class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+                >
+                  <i class="bi bi-shop-window text-white h4"></i>
+                </div>
+                <span class="nav-link-text ms-1 text-white h5"
+                  >réception des<br />dechets envoyés</span
+                >
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="nav-link text-white"
+                href="{% url 'gestiondesh' pseudo %}"
+              >
+                <div
+                  class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+                >
+                  <i class="bi bi-table text-white h4"></i>
+                </div>
+                <span class="nav-link-text ms-1 text-white h5"
+                  >Gestion des<br />dechets recus</span
+                >
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="nav-link text-white"
+                href="{% url 'compoprof' pseudo %}"
+              >
+                <div
+                  class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+                >
+                  <i class="bi bi-person-circle text-white h4"></i>
+                </div>
+                <span class="nav-link-text ms-1 text-white h4">Profil</span>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link text-white" href="{% url 'logout' %}">
+                <div
+                  class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+                >
+                  <i class="bi bi-box-arrow-left text-white h4"></i>
+                </div>
+                <span class="nav-link-text ms-1 text-white h4"
+                  >Déconnexion</span
+                >
+              </a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+      <main
+        class="main-content position-relative max-height-vh-100 h-100 border-radius-lg"
+      >
+        <nav
+          class="navbar navbar-main navbar-expand-lg mt-4 px-0 mx-4 shadow-success border-radius-xl"
+          id="navbarBlur"
+          data-scroll="true"
+        >
+          <div class="container-fluid py-1 px-3">
+            <ul class="navbar-nav justify-content-end">
+              <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                <a
+                  href="javascript:;"
+                  class="nav-link text-body p-0"
+                  id="iconNavbarSidenav"
+                >
+                  <div class="sidenav-toggler-inner">
+                    <i class="sidenav-toggler-line"></i>
+                    <i class="sidenav-toggler-line"></i>
+                    <i class="sidenav-toggler-line"></i>
+                  </div>
+                </a>
+              </li>
+              <li class="nav-item px-3 d-flex align-items-center">
+                {% if user.image %}
+                <img
+                  src="{{ user.image.url }}"
+                  class="img-profile rounded-circle w-20"
+                  style="height: 50px"
+                />
+                {% else %}
+                <img
+                  src="{% static 'images/profil.png' %}"
+                  class="img-profile rounded-circle"
+                  style="height: 50px; width: 50px"
+                />
+                {% endif %}
+                <h5>{{ user.prenom }} {{ user.nom }}</h5>
+              </li>
+            </ul>
+            <nav aria-label="breadcrumb">
+              <ol
+                class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5"
+              >
+                <li class="breadcrumb-item text-sm">
+                  <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
+                </li>
+                <li
+                  class="breadcrumb-item text-sm text-dark active"
+                  aria-current="page"
+                >
+                  Consulter
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </nav>
+        <div class="row ms-2 mt-3 g-3">
+          <div class="col-lg-7 ms-n2 col-md-6">
+            <div class="row">
+              <div class="col-12">
+                <div
+                  id="dash"
+                  class="card w-auto border border-success"
+                  style="height: 455px"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5 h-auto col-md-6 w-auto">
+            <div class="card h-auto ms-2">
+              <form method="POST">
+                {% csrf_token %}
+                <div class="table-responsive p-0">
+                  <table
+                    class="table align-items-center mb-0 border border-success"
+                  >
+                    <thead>
+                      <tr class="table-success border border-success">
+                        <th
+                          colspan="2"
+                          class="text-uppercase text-secondary text-x font-weight-bolder opacity-7"
+                        >
+                          Déchet
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <img
+                            src="{% static 'images/sachet_carbone.jpg'%}"
+                            class="card-img-top"
+                            style="height: 70px"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            class="border border-success"
+                            value="{{transaction.carboné}}"
+                            readonly
+                          />
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td>
+                          <img
+                            src="{% static 'images/sachet_azote.jpg'%}"
+                            class="card-img-top"
+                            style="height: 70px"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            class="border border-success"
+                            value="{{transaction.azoté}}"
+                            readonly
+                          />
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td>
+                          <img
+                            src="{% static 'images/sachet_animaux.jpg'%}"
+                            class="card-img-top"
+                            style="height: 70px"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            class="border border-success"
+                            value="{{transaction.animaux}}"
+                            readonly
+                          />
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td colspan="2">
+                          <div class="d-flex px-2 py-1">
+                            <div
+                              class="d-flex flex-column justify-content-center"
+                            >
+                              <h6>
+                                Date disponible:{{ transaction.date_disponible}} {{transaction.heure_disponible }}
+                              </h6>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      {% if not masquer %}
+                      <tr>
+                        <td>
+                          <button
+                            class="btn btn-outline-primary ms-6"
+                            type="submit"
+                            name="valider"
+                            value="False"
+                          >
+                            <i class="bi bi-trash3"></i> Annuler
+                          </button>
+                        </td>
+                        <td>
+                          <button
+                            class="btn btn-outline-success ms-5"
+                            type="submit"
+                            name="valider"
+                            value="oui"
+                          >
+                            <i class="bi bi-check-lg"></i> Valider
+                          </button>
+                        </td>
+                      </tr>
+                      {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <!--   Core JS Files   -->
+    <script>
+      greener=L.marker([{{ greener.position.y|stringformat:".1000f" }},{{ greener.position.x|stringformat:".1000f" }}]);
+      var map = L.map("dash").setView(greener.getLatLng(),10);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        minZoom: 2,
+        attribution:
+          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+      greener.addTo(map);
+      greener.bindPopup('<p>nom: {{greener.nom}}</p><p>prenom: {{greener.prenom}}</p><p>numéro de téléphone: {{greener.NB_GSM}}</p>');
+    </script>
+    <script src="{% static 'bootstrap-5.2.3-dist/js/bootstrap.bundle.js' %}"></script>
+    <script src="{% static 'js/js/plugins/perfect-scrollbar.min.js' %}"></script>
+    <script src="{% static 'js/js/material-dashboard.min.js' %}"></script>
+  </body>
+</html>

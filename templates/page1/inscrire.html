@@ -1,0 +1,74 @@
+{% extends 'page1/base.html' %} {% block content %}
+<div class="container w-50 h-auto">
+  <form method="POST" class="bg-light shadow-lg p-4 mt-5 rounded">
+    {% csrf_token %}
+    <h1 class="mb-4">Créer un compte {{pk}}</h1>
+    <div class="row mb-3">
+      <div class="col">
+        <h4>Nom</h4>
+        {{ form.nom}}
+        {% if form.nom.errors %}
+        <strong class="text-danger" role="alert">{{ form.nom.errors }}</strong>
+        {% endif %}
+      </div>
+      <div class="col">
+        <h4>Prénom</h4>
+        {{ form.prenom}}
+        {% if form.prenom.errors %}
+        <strong class="text-danger" role="alert">{{ form.prenom.errors }}</strong>
+        {% endif %}
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col">
+        <h4>Pseudo</h4>
+        {{ form.pseudo}}
+        {% if form.pseudo.errors %}
+        <strong class="text-danger" role="alert">{{ form.pseudo.errors }}</strong>
+        {% endif %}
+      </div>
+      <div class="col">
+        <h4>Téléphone</h4>
+        {{ form.telephone }}
+        {% if form.telephone.errors %}
+        <strong class="text-danger" role="alert">{{ form.telephone.errors }}</strong>
+        {% endif %}
+      </div>
+    </div>
+    <div class="mb-3">
+      <h4>E-mail</h4>
+      {{ form.email}}
+      {% if form.email.errors %}
+      <strong class="text-danger" role="alert">{{ form.email.errors }}</strong>
+      {% endif %}
+    </div>
+    <div class="mb-3">
+      <div class="col">
+        <h4>Mot de passe</h4>
+        {{ form.mot_de_passe}}
+        {% if form.mot_de_passe.errors %}
+        <strong class="text-danger" role="alert">{{ form.mot_de_passe.errors }}</strong>
+        {% endif %}
+      </div>
+    </div>
+    <div class="mb-3">
+      <div class="col">
+        <h4>Confirmation du mot de passe</h4>
+        {{ form.confirmation_mot_de_passe}}
+        {% if form.confirmation_mot_de_passe.errors %}
+        <strong class="text-danger" role="alert">{{ form.confirmation_mot_de_passe.errors }}</strong>
+        {% endif %}
+      </div>
+    </div>
+    <div class="text-center">
+      <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" value="save">Suivant</button>
+    </div>
+  </form>
+</div>
+{% if message %}
+<script>
+  alert("{{ message }}");
+</script>
+{% endif %}
+{% endblock %}
+

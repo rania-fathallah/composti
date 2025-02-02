@@ -1,0 +1,311 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="{% static 'images\téléchargement.png' %}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{% static 'images\téléchargement.png' %}"
+    />
+    <title>GREENEUR</title>
+    <!-- CSS Files -->
+    <link
+      rel="stylesheet"
+      href="{% static 'bootstrap-5.2.3-dist/css/bootstrap.css' %}"
+    />
+    <link
+      id="pagestyle"
+      href="{% static 'css/material-dashboard.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+      crossorigin=""
+    ></script>
+  </head>
+  <body class="g-sidenav-show bg-gray-200">
+    <aside
+      class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-success"
+      id="sidenav-main"
+    >
+      <div class="sidenav-header">
+        <i
+          class="bi bi-x-lg p-3 cursor-pointer text-white position-absolute end-0 top-0 d-none d-xl-none h4"
+          aria-hidden="true"
+          id="iconSidenav"
+        ></i>
+        <a class="navbar-brand m-0">
+          <img
+            src="{% static 'images\téléchargement.png' %}"
+            class="navbar-brand-img h-100"
+          />
+          <span class="ms-1 font-weight-bold text-white h3">GREENEUR</span>
+        </a>
+      </div>
+      <hr class="horizontal light mt-0 mb-2" />
+      <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'dashboard' pseudo %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-tv text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h4">Dashboard</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'store' pseudo %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-shop-window text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h4"
+                >envoyer des<br />dechets</span
+              >
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'gestion' pseudo %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-table text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h5"
+                >Gestion des<br />dechets envoyés</span
+              >
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'profile' pseudo %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-person-circle text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h4">Profil</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'logout' %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-box-arrow-left text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h4">Déconnexion</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <main
+      class="main-content position-relative max-height-vh-100 h-100 border-radius-lg"
+    >
+      <nav
+        class="navbar navbar-main navbar-expand-lg mt-4 px-0 mx-4 shadow-success border-radius-xl"
+        id="navbarBlur"
+        data-scroll="true"
+      >
+        <div class="container-fluid py-1 px-3">
+          <ul class="navbar-nav justify-content-end">
+            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+              <a
+                href="javascript:;"
+                class="nav-link text-body p-0"
+                id="iconNavbarSidenav"
+              >
+                <div class="sidenav-toggler-inner">
+                  <i class="sidenav-toggler-line"></i>
+                  <i class="sidenav-toggler-line"></i>
+                  <i class="sidenav-toggler-line"></i>
+                </div>
+              </a>
+            </li>
+            <li class="nav-item px-3 d-flex align-items-center">
+              {% if user.image %}
+              <img
+                src="{{ user.image.url }}"
+                class="img-profile rounded-circle w-20"
+                style="height: 50px"
+              />
+              {% else %}
+              <img
+                src="{% static 'images/profil.png' %}"
+                class="img-profile rounded-circle"
+                style="height: 50px; width: 50px"
+              />
+              {% endif %}
+              <h5>{{ user.prenom }} {{ user.nom }}</h5>
+            </li>
+          </ul>
+          <nav aria-label="breadcrumb">
+            <ol
+              class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5"
+            >
+              <li class="breadcrumb-item text-sm">
+                <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
+              </li>
+              <li
+                class="breadcrumb-item text-sm text-dark active"
+                aria-current="page"
+              >
+                changer composteur
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </nav>
+      <div class="container-fluid w-auto h-auto px-2 px-md-4 mb-3">
+        <div
+          class="page-header min-height-300 border-radius-xl mt-4"
+          style="
+            background-image: url('https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+          "
+        >
+          <span class="mask bg-gradient-success opacity-6"></span>
+          <div class="container m-3" id="map2">
+            <form method="POST">
+              {% csrf_token %}
+              <h1 class="text-center" style="color: white">
+                Choisir votre composteur
+              </h1>
+              <div
+                class="w-auto position-relative d-flex justify-content-center"
+                id="mymap"
+                style="height: 400px"
+              >
+                <div
+                  class="arrows align-items-center text-center position-absolute"
+                  style="z-index: 1000"
+                >
+                  <label>
+                    <h4>distance que vous voulez :</h4>
+                  </label>
+                  <input
+                    type="number"
+                    id="destin"
+                    name="destin"
+                    class="border border-success mb-3"
+                  />
+                  <button
+                    class="arrows btn btn-success mt-3"
+                    type="submit"
+                    value="save"
+                    id="envoyer"
+                  >
+                    recherche
+                  </button>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card w-auto">
+                  <div class="card-body text-center">
+                    <div class="arrows align-items-center">
+                      <label><h4>Choisissez votre composteur:</h4></label>
+                      <input
+                        type="text"
+                        class="arrows border border-success mb-3"
+                        id="test"
+                        name="composteur"
+                        placeholder="Nom de l entreprise"
+                      />
+                      <button
+                        class="arrow btn btn-success mt-3"
+                        type="submit"
+                        value="save"
+                      >
+                        envoyer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!--   Core JS Files   -->
+    <script>
+          const map2 = document.getElementById("map2");
+          const envoyer = document.getElementById("envoyer");
+
+          var marker;
+          var composteur;
+          var distance;
+
+      // Get the input values for latitude and longitude
+      var lat;
+      var lng;
+        marker = L.marker([{{ user.position.y|stringformat:".1000f" }},{{ user.position.x|stringformat:".1000f" }}])
+          mymap = L.map("mymap",{ doubleClickZoom: false }).setView(marker.getLatLng(),10);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19,minZoom: 2,attribution:'&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',}).addTo(mymap);
+          marker.addTo(mymap);
+          envoyer.addEventListener("click", function (event) {
+              event.preventDefault();
+              distance=0;
+              if (composteur) {
+                mymap.removeLayer(composteur);
+              }
+            {% for comp in composteur %}
+                var myIcon = L.icon({
+                  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+                  iconSize: [25, 41],
+                  iconAnchor: [12, 41],
+                  popupAnchor: [1, -34],
+                  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                  shadowSize: [41, 41],
+                  shadowAnchor: [12, 41]});
+                composteur = L.marker([{{ comp.position.y|stringformat:".1000f" }},{{ comp.position.x|stringformat:".1000f" }}],{icon: myIcon}).addTo(mymap);
+                composteur.bindPopup('<p>nom: {{comp.nom}}</p><p>prenom: {{comp.prenom}}</p><p>numéro de téléphone: {{comp.NB_GSM}}</p><p>Nom de l entreprise: {{comp.pseudo_C  }}</p>');
+
+              // Check distance between markers and show/hide myMarker accordingly
+              distance = composteur.getLatLng().distanceTo(marker.getLatLng());
+              var km=document.getElementById("destin").value
+              km = km*1000
+              if (distance > km) {
+                mymap.removeLayer(composteur);
+              }
+              composteur.on('click', () => {
+                document.getElementById('test').value = "{{comp.pseudo_C}}";
+            });
+          {% endfor %}
+            });
+            {% if message %}
+        alert("{{ message }}");
+        {% endif %}
+    </script>
+    <script src="{% static 'bootstrap-5.2.3-dist/js/bootstrap.bundle.js' %}"></script>
+    <script src="{% static 'js/js/plugins/perfect-scrollbar.min.js' %}"></script>
+    <script src="{% static 'js/js/material-dashboard.min.js' %}"></script>
+  </body>
+</html>

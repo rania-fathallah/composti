@@ -1,0 +1,11 @@
+{% extends 'admin/base_site.html' %}{% block extrahead %}{{ block.super }}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const myDiv = document.getElementById('logout-form');
+    const customButton = document.createElement('a'); // Changed from button to anchor tag
+    customButton.textContent = '/ Dashboard'; // Removed '/' from the text content
+    customButton.setAttribute('href', "{% url 'dashadmin' %}");
+    myDiv.appendChild(customButton);
+  });
+</script>
+{% endblock %}

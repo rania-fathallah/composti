@@ -1,0 +1,28 @@
+{% extends 'page1/base.html' %} {% block content %}
+<div class="container w-50 h-auto ">
+  <form method="POST" class="bg-light w-auto shadow-lg p-4 mt-5 rounded">
+    {% csrf_token %}
+    <h1 class="text-center mb-4">Connexion</h1>
+    <div class="mb-3">
+      <label for="pseudo" class="form-label"><h4>Pseudo:</h4></label>
+      {{ form.pseudo }}
+      {% if form.pseudo.errors %}<h4>
+      <div class="text-danger" role="alert">{{ form.pseudo.errors }}</div></4>
+      {% endif %}
+    </div>
+    <div class="mb-3">
+      <label for="mot_de_passe" class="form-label"><h4>Mot de passe:</h4></label>
+      {{ form.mot_de_passe }}
+      {% if form.mot_de_passe.errors %}<h4>
+      <div class="text-danger" role="alert">{{ form.mot_de_passe.errors }}</div></h4>
+      {% endif %}
+    </div>
+    <div class="text-center">
+      <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" value="save">Connexion</button>
+    </div>
+    <br>
+    <label class="form-label"><h6>mot de passe oublie <a href="{% url 'reset_password' %}">click ici</a></h6></label>
+  </form>
+</div>
+
+{% endblock %}

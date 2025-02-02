@@ -1,0 +1,342 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="{% static 'images\téléchargement.png' %}">
+  <link rel="icon" type="image/png" href="{% static 'images\téléchargement.png' %}">
+  <title>
+    GREENEUR
+  </title>
+    <!-- CSS Files -->
+    <link rel="stylesheet"href="{% static 'bootstrap-5.2.3-dist/css/bootstrap.css' %}"/>
+    <link id="pagestyle" href="{% static 'css/material-dashboard.css' %}" rel="stylesheet"/>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+      crossorigin=""></script>
+</head>
+<body class="g-sidenav-show  bg-gray-200">
+  <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-success "  id="sidenav-main">
+    <div class="sidenav-header">
+      <i class="bi bi-x-lg p-3 cursor-pointer text-white position-absolute end-0 top-0 d-none d-xl-none h4" aria-hidden="true" id="iconSidenav"></i>
+      <a class="navbar-brand m-0">
+        <img src="{% static 'images\téléchargement.png' %}" class="navbar-brand-img h-100">
+          <span class="ms-1 font-weight-bold text-white h3">GREENEUR</span>
+        </a>
+      </div>
+      <hr class="horizontal light mt-0 mb-2" />
+      <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'dashboard' pseudo %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-tv text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h4">Dashboard</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'store' pseudo %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-shop-window text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h4">envoyer des<br>dechets</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'gestion' pseudo %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-table text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h5">Gestion des<br>dechets envoyés</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'profile' pseudo %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-person-circle text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h4">Profil</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'logout' %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-box-arrow-left text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h4">Déconnexion</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+  </aside>
+    <main
+      class="main-content position-relative max-height-vh-100 h-100 border-radius-lg"
+    >
+      <nav
+        class="border border-success navbar navbar-main navbar-expand-lg mt-4 px-0 mx-4 shadow-success border-radius-xl"
+        id="navbarBlur"
+        data-scroll="true"
+      >
+        <div class="container-fluid py-1 px-3">
+          <ul class="navbar-nav justify-content-end">
+            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+              <a
+                href="javascript:;"
+                class="nav-link text-body p-0"
+                id="iconNavbarSidenav"
+              >
+                <div class="sidenav-toggler-inner">
+                  <i class="sidenav-toggler-line"></i>
+                  <i class="sidenav-toggler-line"></i>
+                  <i class="sidenav-toggler-line"></i>
+                </div>
+              </a>
+            </li>
+            <li class="nav-item px-3 d-flex align-items-center">
+              
+              {% if user.image %}
+              <img
+                src="{{ user.image.url }}"
+                class="img-profile rounded-circle w-20"
+                style="height: 50px"
+              />
+              {% else %}
+              <img
+                src="{% static 'images/profil.png' %}"
+                class="img-profile rounded-circle"
+                style="height: 50px; width: 50px"
+              />
+              {% endif %}
+              <h5>{{ user.prenom }} {{ user.nom }}</h5>
+            </li>
+          </ul>
+          <nav aria-label="breadcrumb">
+            <ol
+              class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5"
+            >
+              <li class="breadcrumb-item text-sm">
+                <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
+              </li>
+              <li
+                class="breadcrumb-item text-sm text-dark active"
+                aria-current="page"
+              >
+                profil
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </nav>
+      <div class="container-fluid w-auto h-auto px-2 px-md-4 mb-3">
+        <div
+          class="page-header min-height-300 border-radius-xl mt-4"
+          style="
+            background-image: url('https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+          "
+        >
+          <span class="mask bg-gradient-success opacity-6"></span>
+          
+          <form
+            method="POST"
+            class="mx-0 mx-md-6 mt-5"
+            enctype="multipart/form-data"
+          >
+            {% csrf_token %}
+            <div class="main-body">
+              <div class="row row-cols-0 row-cols-md-2 g-2 text-center">
+                <div class="col">
+                  <div class="card shadow-success border border-success mb-3">
+                    <div class="card-body text-center">
+                      {% if user.image %}
+                      <img
+                        src="{{ user.image.url }}"
+                        class="rounded-circle mb-4"
+                        width="200"
+                        alt="profile picture"
+                        id="img"
+                      />
+                      {% else %}
+                      <img
+                        src="{% static 'images/profil.png' %}"
+                        class="rounded-circle mb-4"
+                        width="200"
+                        alt="profile picture"
+                        id="img"
+                      />
+                      {% endif %} {% csrf_token %}
+                      <input
+                        type="file"
+                        accept="image/png, image/jpeg"
+                        name="image"
+                        id="putimg"
+                      />
+                      <h1 class="mb-1">{{ user.prenom }} {{ user.nom }}</h1>
+                      <p class="text-muted mb-2">Greener</p>
+                    </div>
+                  </div>
+                  <div class="card mt-3 shadow-success border border-success mb-3">
+                    <ul class="list-group list-group-flush">
+                      <li
+                        class="list-group-item d-flex justify-content-between align-items-center flex-wrap border border-success mb-3"
+                      >
+                        <h3>Address</h3>
+                      </li>
+                      <li
+                        class="list-group-item d-flex justify-content-between align-items-center flex-wrap"
+                      >
+                        <div
+                          id="maped"
+                          class="container maps"
+                          style="height: 270px"
+                        >
+                          <input type="hidden" id="lat" name="lat" />
+                          <input type="hidden" id="lng" name="lng" />
+                        </div>
+                        <br />
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col">
+                  <div
+                    class="card mb-3 w-auto h-auto shadow-success border border-success mb-3"
+                  >
+                    <div class="card-body text-center">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <label for="inputNom"><h4>Nom :</h4></label>
+                        </div>
+                        {{ form.nom}} {% if form.nom.errors %}
+                        <strong class="text-danger" role="alert"
+                          >{{ form.nom.errors }}</strong
+                        >
+                        {% endif %}
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <label for="inputPrenom"><h4>Prénom:</h4> </label>
+                        </div>
+                        {{ form.prenom}} {% if form.prenom.errors %}
+                        <strong class="text-danger" role="alert"
+                          >{{ form.prenom.errors }}</strong
+                        >
+                        {% endif %}
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <label for="inputPseudo"><h4>Pseudo:</h4></label>
+                        </div>
+                        <input
+                          type="text"
+                          class="form-control border border-success mb-3 h3"
+                          value="{{ user.pseudo_G }}"
+                          readonly
+                        />
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <label for="inputEmail"><h4>Email:</h4></label>
+                        </div>
+                        <input
+                          type="Email"
+                          class="form-control border border-success mb-3 h3"
+                          value="{{ user.e_mail }}"
+                          readonly
+                        />
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <label for="inputPhone"><h4>Téléphone:</h4></label>
+                        </div>
+                        {{ form.telephone}} {% if form.telephone.errors %}
+                        <strong class="text-danger" role="alert"
+                          >{{ form.telephone.errors }}</strong
+                        >
+                        {% endif %}
+                      </div>
+                      <div class="form-group row">
+                        <div class="col-sm-12 text-center">
+                          <button
+                            type="submit"
+                            class="btn btn-outline-success my-2 my-sm-0 h4"
+                          >
+                            Enregistrer
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+    <!--   Core JS Files   -->
+    <script>
+      document.getElementById("prenom").value = "{{ user.prenom }}";
+      document.getElementById("nom").value = "{{ user.nom }}";
+      document.getElementById("NB_GSM").value = "{{ user.NB_GSM }}";
+
+      marker = L.marker([{{ user.position.y|stringformat:".1000f" }},{{ user.position.x|stringformat:".1000f" }}])
+      var map = L.map("maped", { doubleClickZoom: false }).setView(
+        marker.getLatLng(),10
+      );
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        minZoom: 2,
+        attribution:
+          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+      marker.addTo(map);
+      map.on("click", function (e) {
+        // If marker is already defined, remove it before adding a new one
+        if (marker) {
+          map.removeLayer(marker);
+        }
+        // Add new marker at double-clicked location
+        marker = L.marker(e.latlng).addTo(map);
+
+        document.getElementById("lat").value = e.latlng.lat;
+        console.log(e.latlng.lat)
+        document.getElementById("lng").value = e.latlng.lng;
+      });
+      const image = document.getElementById("img");
+      const input = document.getElementById("putimg");
+      input.addEventListener("change", () => {
+        image.src = URL.createObjectURL(input.files[0]);
+      });
+    </script>
+    <script src="{% static 'bootstrap-5.2.3-dist/js/bootstrap.bundle.js' %}"></script>
+    <script src="{% static 'js/js/plugins/perfect-scrollbar.min.js' %}"></script>
+    <script src="{% static 'js/js/material-dashboard.min.js' %}"></script>
+  </body>
+</html>

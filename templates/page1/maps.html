@@ -1,0 +1,276 @@
+{% extends 'page1/base.html' %} {% block content %}
+<form id="map1">
+  <div class="text-center mt-4" style="color: whitesmoke">
+    <h1 style="color:{% if form.latitude.errors %}red{% endif %}">
+      Choisir votre position{% if form.pseudo.errors %}<strong
+        class="text-danger"
+        role="alert"
+        >{{ form.pseudo.errors}}</strong
+      >{% endif %}
+    </h1>
+
+    <div
+      class="container w-75 position-relative d-flex justify-content-center"
+      id="map"
+      style="height: 500px"
+    >
+      <div
+        class="align-items-center text-center position-absolute"
+        style="color: black; z-index: 1000"
+      >
+        <label for="latt">Latitude:</label>
+        <input
+          type="number"
+          id="latt"
+          name="latitude"
+          step="0.00000000000000000000000000000001"
+          required
+        />
+        <label for="lngg">Longitude:</label>
+        <input
+          type="number"
+          id="lngg"
+          name="longitude"
+          step="0.00000000000000000000000000000001"
+          required
+        />
+        <button class="btn btn-outline-primary" id="ajouter">Afficher</button>
+      </div>
+    </div>
+    <button
+      class="btn btn-outline-primary my-2 my-sm-0"
+      id="nextmap"
+      style="width: 30%"
+    >
+      Suivant
+    </button>
+  </div>
+</form> 
+<form method="POST" id="map2" style="display: none">
+  {% csrf_token %}
+  <div class="text-center mt-4" {% if message %} style="color: red" {% endif %}>
+    <h1 {% if not message %} style="color: whitesmoke" {% endif %} {% if message %} style="color: red" {% endif %}>Choisir votre composteur</h1>
+    <div
+      class="container w-75 position-relative d-flex justify-content-center"
+      id="mymap"
+      style="height: 500px"
+    >
+      <div
+        class="arrows align-items-center text-center position-absolute"
+        style="z-index: 1000"
+      >
+        <label>
+          <h4>distance que vous voulez :</h4>
+        </label>
+        <input
+          type="number"
+          id="destin"
+          name="destin"
+          class="border border-success mb-3"
+        />
+        <button
+          class="btn btn-outline-primary"
+          type="submit"
+          value="save"
+          id="envoyer"
+        >
+          recherche
+        </button>
+      </div>
+      <div
+        class="arrows align-items-center fixed-bottom text-center position-absolute"
+        style="z-index: 1000"
+      >
+        <label><h4>Choisissez votre composteur:</h4></label>
+        <input
+          type="text"
+          class="arrows border border-success mb-3 fs-6"
+          id="test"
+          name="composteur"
+          placeholder="Nom de l entreprise"
+        />
+      </div>
+    </div>
+    <div class="text-center mt-3">
+      <div class="arrows align-items-center b-0">
+        <div class="arrows">
+          <button
+            class="arrow btn btn-outline-danger my-2 my-sm-0"
+            style="width: 30%"
+            type="submit"
+            value="save"
+            id="go-back"
+          >
+            retourner
+          </button>
+          <button
+            class="arrow btn btn-outline-primary my-2 my-sm-0"
+            style="width: 30%"
+            type="submit"
+            value="save"
+          >
+            envoyer
+          </button>
+        </div>
+      </div>
+    </div>
+    <div style="display: none">{{ form }}</div>
+  </div>
+</form>
+
+<script>
+      const map1 = document.getElementById("map1");
+      const nextmap = document.getElementById("nextmap");
+      const map2 = document.getElementById("map2");
+      const goBack = document.getElementById("go-back");
+      const envoyer = document.getElementById("envoyer");
+      const ajouter = document.getElementById("ajouter");
+
+      var map = L.map("map", { doubleClickZoom: false }).setView([19, -12], 2);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19,minZoom: 2,attribution:'&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'}).addTo(map);
+
+      var marker;
+      var mymap;
+      var myMarker;
+      var composteur;
+      var distance;
+
+  // Get the input values for latitude and longitude
+      var lat;
+      var lng;
+
+  // Add an event listener to the button with ID "ajouter"
+      ajouter.addEventListener("click", function(event) {
+        lat = document.getElementById("latt").value;
+        lng = document.getElementById("lngg").value;
+        // If marker is already defined, update its position
+        if (marker) {
+          marker.setLatLng([lat, lng]);
+          // setLatLng takes an array of coordinates
+          // Update position of myMarker on map2 if the marker changes location
+          if (myMarker) {
+            myMarker.setLatLng([lat, lng]);
+          }
+        } else {
+          // Add new marker at clicked location
+          marker = L.marker([lat, lng], { draggable: true }); // setLatLng takes an array of coordinates
+          marker.addTo(map);
+        }
+
+        // Update the input values with the new latitude and longitude
+        document.getElementById("latt").value = lat;
+        document.getElementById("lngg").value = lng;
+        document.getElementById("lat").value = lat;
+        document.getElementById("lng").value = lng;
+
+        // Add an event listener to the marker for when it is dragged
+        marker.on("dragend", function(e) {
+          var marker = e.target;
+          var position = marker.getLatLng();
+
+          // Update the input values with the new latitude and longitude
+          document.getElementById("latt").value = position.lat;
+          document.getElementById("lngg").value = position.lng;
+          document.getElementById("lat").value = position.lat;
+          document.getElementById("lng").value = position.lng;
+
+          // Update position of myMarker on map2 when the marker is dragged
+          if (myMarker) {
+            myMarker.setLatLng(position);
+          }
+        });
+      });
+      map.on("dblclick", function (e) {
+        // If marker is already defined, update its position
+        if (marker) {
+          marker.setLatLng(e.latlng);
+          // Update position of myMarker on map2 if the marker changes location
+          if (myMarker) {
+            myMarker.setLatLng(e.latlng);
+          }
+        } else {
+          // Add new marker at clicked location
+          marker = L.marker(e.latlng, { draggable: true });
+          marker.addTo(map);
+        }
+        document.getElementById("latt").value = e.latlng.lat;
+        document.getElementById("lngg").value = e.latlng.lng;
+        document.getElementById("lat").value = e.latlng.lat;
+        document.getElementById("lng").value = e.latlng.lng;
+
+        marker.on("dragend", function (e) {
+          var marker = e.target;
+          var position = marker.getLatLng();
+          document.getElementById("latt").value = position.lat;
+          document.getElementById("lngg").value = position.lng;
+          document.getElementById("lat").value = position.lat;
+          document.getElementById("lng").value = position.lng;
+
+          // Update position of myMarker on map2 when the marker is dragged
+          if (myMarker) {
+            myMarker.setLatLng(position);
+          }
+        });
+      });
+      nextmap.addEventListener("click", function (event) {
+        event.preventDefault();
+        map2.style.display = "block";
+        map1.style.display = "none";
+        distance=0;
+        if (!mymap) {
+          mymap = L.map("mymap").setView([19, -12],2);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19,minZoom: 2,attribution:'&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',}).addTo(mymap);}
+
+        if (composteur) {
+            mymap.removeLayer(composteur);
+        }
+        // Delete old marker on mymap if it exists
+        if (myMarker) {
+          mymap.removeLayer(myMarker);
+        }
+        // Add new  marker to mymap
+        myMarker = L.marker(marker.getLatLng());
+        myMarker.addTo(mymap);
+
+        envoyer.addEventListener("click", function (event) {
+          event.preventDefault();
+          map2.style.display = "block";
+          map1.style.display = "none";
+          if (composteur) {
+            mymap.removeLayer(composteur);
+          }
+          {% for comp in composteur %}
+                var myIcon = L.icon({
+                  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+                  iconSize: [25, 41],
+                  iconAnchor: [12, 41],
+                  popupAnchor: [1, -34],
+                  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                  shadowSize: [41, 41],
+                  shadowAnchor: [12, 41]});
+                composteur = L.marker([{{ comp.position.y|stringformat:".1000f" }},{{ comp.position.x|stringformat:".1000f" }}],{icon: myIcon}).addTo(mymap);
+                composteur.bindPopup('<p>nom: {{comp.nom}}</p><p>prenom: {{comp.prenom}}</p><p>numéro de téléphone: {{comp.NB_GSM}}</p><p>Nom de l entreprise: {{comp.pseudo_C}}</p>');
+
+              // Check distance between markers and show/hide myMarker accordingly
+              distance = composteur.getLatLng().distanceTo(marker.getLatLng());
+              var km=document.getElementById("destin").value
+              km = km*1000
+              if (distance > km) {
+                mymap.removeLayer(composteur);
+              }
+              composteur.on('click', () => {
+                document.getElementById('test').value = "{{comp.pseudo_C}}";
+            });
+          {% endfor %}
+        });
+      });
+      goBack.addEventListener("click", function (event) {
+        event.preventDefault();
+        map1.style.display = "block";
+        map2.style.display = "none";
+      });
+      {% if message %}
+      alert("{{ message }}");
+      {% endif %}
+</script>
+{% endblock %}

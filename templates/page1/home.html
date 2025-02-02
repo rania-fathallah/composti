@@ -1,0 +1,157 @@
+{% extends 'page1/base.html' %} {% block content %} {% load static %}
+<div class="pb-3 w-auto h-auto" style="background-color: whitesmoke">
+  <div
+    id="carouselExampleIndicators"
+    class="carousel slide"
+    data-bs-ride="carousel"
+  >
+    <ol class="carousel-indicators">
+      <li
+        data-bs-target="#carouselExampleIndicators"
+        data-bs-slide-to="0"
+        class="active"
+      ></li>
+      <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></li>
+      <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img
+          src="{%static 'images\comp.jpg'%}"
+          class="d-block w-100"
+          width="400"
+          height="500"
+          alt="..."
+        />
+      </div>
+      <div class="carousel-item">
+        <img
+          src="{%static 'images\frr.jpeg'%}"
+          class="d-block w-100"
+          width="400"
+          height="500"
+          alt="..."
+        />
+      </div>
+      <div class="carousel-item">
+        <img
+          src="{%static 'images\tof.jpg'%}"
+          class="d-block w-100"
+          width="400"
+          height="500"
+          alt="..."
+        />
+      </div>
+    </div>
+    <button
+      class="carousel-control-prev"
+      type="button"
+      data-bs-target="#carouselExampleIndicators"
+      data-bs-slide="prev"
+    >
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button
+      class="carousel-control-next"
+      type="button"
+      data-bs-target="#carouselExampleIndicators"
+      data-bs-slide="next"
+    >
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+  <div class="p-0 m-5">
+    <hr class="featurette-divider" />
+    <div class="row featurette">
+      <div class="col-md-7">
+        <br />
+        <h2 class="featurette-heading">
+          L'amincissement de l’ozone
+          <span class="text-muted">-Une Terre sans écran solaire..</span>
+        </h2>
+        <p class="lead">
+          Les activités humaines sont le principal facteur responsable de la
+          perturbation de cet équilibre naturel, principalement à cause des
+          émissions dans l'atmosphère de produits chimiques de synthèse connus
+          sous le nom de substances appauvrissant la couche d'ozone .
+        </p>
+      </div>
+      <div class="col-md-5">
+        <img src="{%static 'images\ozo.png'%}" alt="" width="400px" />
+      </div>
+    </div>
+    <hr class="featurette-divider" />
+    <div class="row featurette">
+      <div class="col-md-7 order-md-2">
+        <h2 class="featurette-heading">
+          Les polluants atmosphériques
+          <span class="text-muted">depuis différents sources .</span>
+        </h2>
+        <p class="lead">
+          Les oxydes d’azote <br />
+          La pollution industrielle <br />
+          les dechets <br />
+          la digestion des animaux (notamment des ruminants) et des matières en
+          putréfaction (gaz des marais).
+        </p>
+      </div>
+      <div class="col-md-5 order-md-1">
+        <img src="{%static 'images\stat.jpg'%}" alt="" width="500px" />
+      </div>
+    </div>
+
+    <hr class="featurette-divider" />
+    <div class="row featurette">
+      <div class="col-md-7">
+        <h2 class="featurette-heading">
+          pour protéger la nature et la couche d'ozone
+          <span class="text-muted"
+            >une d'apres les solutions efficaces est: <br /><span
+              style="color: green"
+            >
+              le compostage et le recyclage.</span
+            >
+          </span>
+        </h2>
+        <p class="lead">
+          Lorsque recyclées biologiquement, par compostage ou par
+          biométhanisation, les matières organiques sont plutôt valorisées en
+          compost ou en énergie (biogaz). * Le compostage produit 20 fois moins
+          de gaz à effet de serre que l'enfouissement!.
+        </p>
+      </div>
+      <div class="col-md-5">
+        <img src="{%static 'images\desh.png'%}" alt="" width="500px" />
+      </div>
+    </div>
+    <br />
+    <div style="margin: left 20px; text-align: center">
+      <h1 style="color: green">notre application vise a quoi ?</h1>
+      <br />
+
+      <div class="bg-success p-2 text-white">
+        <p class="font-monospace" style="font-size: x-large">
+          Application pratique et ludique qui vous aide à adopter les bons
+          gestes et à bien trier vos déchets organiques.
+          <br />Pour profiter des nombreux avantages qu’offre le compost pour
+          vous et pour la planète, <br />COMPO est fait pour vous
+        </p>
+      </div>
+      <br />
+      <h1 style="color: forestgreen">Les déchets à composter :</h1>
+      <br />
+      <div class="border border-success p-2 mb-2">
+        <span style="flood-color: black"> déchets de cuisine :</span>
+        fruits et de légumes abimés, épluchures, marc de café, feuilles de thé,
+        coquilles d’oeufs, laitages, etc <br />
+        <span>Les déchets de jardin :</span>
+        feuilles mortes, tonte de gazon, fleurs fanées, etc <br />
+        <span>Certains déchets de maison :</span>
+        papier journal, mouchoirs en papier, cendre de bois, etc.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

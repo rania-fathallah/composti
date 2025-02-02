@@ -1,0 +1,762 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="{% static 'images\téléchargement.png' %}">
+  <link rel="icon" type="image/png" href="{% static 'images\téléchargement.png' %}">
+  <title>
+    GREENEUR
+  </title>
+    <!-- CSS Files -->
+    <link rel="stylesheet"href="{% static 'bootstrap-5.2.3-dist/css/bootstrap.css' %}"/>
+    <link id="pagestyle" href="{% static 'css/material-dashboard.css' %}" rel="stylesheet"/>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+      crossorigin=""></script>
+</head>
+<body class="g-sidenav-show  bg-gray-200">
+  <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-success "  id="sidenav-main">
+    <div class="sidenav-header">
+      <i class="bi bi-x-lg p-3 cursor-pointer text-white position-absolute end-0 top-0 d-none d-xl-none h4" aria-hidden="true" id="iconSidenav"></i>
+      <a class="navbar-brand m-0">
+        <img src="{% static 'images\téléchargement.png' %}" class="navbar-brand-img h-100">
+          <span class="ms-1 font-weight-bold text-white h3">GREENEUR</span>
+        </a>
+      </div>
+      <hr class="horizontal light mt-0 mb-2" />
+      <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'dashboard' pseudo %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-tv text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h4">Dashboard</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'store' pseudo %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-shop-window text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h4">envoyer des<br>dechets</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'gestion' pseudo %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-table text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h5">Gestion des<br>dechets envoyés</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'profile' pseudo %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-person-circle text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h4">Profil</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'logout' %}">
+              <div
+                class="text-white text-center me-2 d-flex align-items-center justify-content-center"
+              >
+                <i class="bi bi-box-arrow-left text-white h4"></i>
+              </div>
+              <span class="nav-link-text ms-1 text-white h4">Déconnexion</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+  </aside>
+    <main
+      class="main-content position-relative max-height-vh-100 h-100 border-radius-lg"
+    >
+      <nav
+        class="border border-success navbar navbar-main navbar-expand-lg mt-4 px-0 mx-4 shadow-success border-radius-xl"
+        id="navbarBlur"
+        data-scroll="true"
+      >
+        <div class="container-fluid py-1 px-3">
+          <ul class="navbar-nav justify-content-end">
+            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+              <a
+                href="javascript:;"
+                class="nav-link text-body p-0"
+                id="iconNavbarSidenav"
+              >
+                <div class="sidenav-toggler-inner">
+                  <i class="sidenav-toggler-line"></i>
+                  <i class="sidenav-toggler-line"></i>
+                  <i class="sidenav-toggler-line"></i>
+                </div>
+              </a>
+            </li>
+            <li class="nav-item px-3 d-flex align-items-center">
+              
+              {% if user.image %}
+              <img
+                src="{{ user.image.url }}"
+                class="img-profile rounded-circle w-20"
+                style="height: 50px"
+              />
+              {% else %}
+              <img
+                src="{% static 'images/profil.png' %}"
+                class="img-profile rounded-circle"
+                style="height: 50px; width: 50px"
+              />
+              {% endif %}
+              <h5>{{ user.prenom }} {{ user.nom }}</h5>
+            </li>
+          </ul>
+          <nav aria-label="breadcrumb">
+            <ol
+              class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5"
+            >
+              <li class="breadcrumb-item text-sm">
+                <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
+              </li>
+              <li
+                class="breadcrumb-item text-sm text-dark active"
+                aria-current="page"
+              >
+              envoyer des dechets
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </nav>
+      <div class="container-fluid py-5 ">
+        <form id="quantity-form">
+          <div class="row row-cols-0 row-cols-md-5 g-2">
+            <div class="col ">
+              <div class="card h-100 border border-success">
+                <img
+                  src="{% static 'images/fumier.jpg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">fumier des animaux</h5>
+                  <small>mettre dans le sachet animaux</small> 
+                  <br />
+                  <div class="input-group-outline d-flex align-items-center">
+                    <button
+                      class="btn btn-outline-success mr-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                    >
+                      -
+                    </button>
+                    <input
+                      value="0"
+                      class="form-control border border-success mb-3"
+                      style="text-align: center"
+                      min="0"
+                      id="fumier"
+                      type="number"
+                    />
+                    <button
+                      class="btn btn-outline-success ml-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 border border-success">
+                <img
+                  src="{% static 'images/viande.jpg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">le rest de viande</h5>
+                  <small>mettre dans le sachet animaux</small> 
+                  <br />
+                  <div class="input-group-outline d-flex align-items-center">
+                    <button
+                      class="btn btn-outline-success mr-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                    >
+                      -
+                    </button>
+                    <input
+                      value="0"
+                      class="form-control border border-success mb-3"
+                      style="text-align: center"
+                      min="0"
+                      id="viande"
+                      type="number"
+                    />
+                    <button
+                      class="btn btn-outline-success ml-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 border border-success">
+                <img
+                  src="{% static 'images/fruit.jpg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">le reste des fruits</h5>
+                  <small>mettre dans le sachet azoté</small> 
+                  <br />
+                  <div class="input-group-outline d-flex align-items-center">
+                    <button
+                      class="btn btn-outline-success mr-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                    >
+                      -
+                    </button>
+                    <input
+                      value="0"
+                      class="form-control border border-success mb-3"
+                      style="text-align: center"
+                      min="0"
+                      id="fruits"
+                      type="number"
+                    />
+                    <button
+                      class="btn btn-outline-success ml-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 border border-success">
+                <img
+                  src="{% static 'images/vegetaux.jpg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <h6 class="card-title">le reste des legumes</h6>
+                  <small>mettre dans le sachet azoté</small> 
+                  <br>
+                  <div class="input-group-outline d-flex align-items-center">
+                    <button
+                      class="btn btn-outline-success mr-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                    >
+                      -
+                    </button>
+                    <input
+                      value="0"
+                      class="form-control border border-success mb-3"
+                      style="text-align: center"
+                      min="0"
+                      id="vegetaux"
+                      type="number"
+                    />
+                    <button
+                      class="btn btn-outline-success ml-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 border border-success">
+                <img
+                  src="{% static 'images/fleurs fanées.jpg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">fleurs fanées</h5>
+                  <small>mettre dans le sachet azoté</small> 
+
+                  <br />
+                  <div class="input-group-outline d-flex align-items-center">
+                    <button
+                      class="btn btn-outline-success mr-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                    >
+                      -
+                    </button>
+                    <input
+                      value="0"
+                      class="form-control border border-success mb-3"
+                      style="text-align: center"
+                      min="0"
+                      id="fleurs"
+                      type="number"
+                    />
+                    <button
+                      class="btn btn-outline-success ml-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 border border-success">
+                <img
+                  src="{% static 'images/feuilles.jpeg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">feuilles</h5>
+                  <small>mettre dans le sachet azoté</small>
+                  
+                  <div class="input-group-outline d-flex align-items-center">
+                    <button
+                      class="btn btn-outline-success mr-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                    >
+                      -
+                    </button>
+                    <input
+                      value="0"
+                      class="form-control border border-success mb-3"
+                      style="text-align: center"
+                      min="0"
+                      id="feuilles"
+                      type="number"
+                    />
+                    <button
+                      class="btn btn-outline-success ml-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 border border-success">
+                <img
+                  src="{% static 'images/filtre_cafe.jpg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">filtre cafe</h5>
+                  <small>mettre dans le sachet carboné</small> 
+                  <div class="input-group-outline d-flex align-items-center">
+                    <button
+                      class="btn btn-outline-success mr-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                    >
+                      -
+                    </button>
+                    <input
+                      value="0"
+                      class="form-control border border-success mb-3"
+                      style="text-align: center"
+                      min="0"
+                      id="filtre_cafe"
+                      type="number"
+                    />
+                    <button
+                      class="btn btn-outline-success ml-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 border border-success">
+                <img
+                  src="{% static 'images/pain.jpg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">pain</h5>
+                  <small>mettre dans le sachet carboné</small> 
+                  <div class="input-group-outline d-flex align-items-center">
+                    <button
+                      class="btn btn-outline-success mr-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                    >
+                      -
+                    </button>
+                    <input
+                      value="0"
+                      class="form-control border border-success mb-3"
+                      style="text-align: center"
+                      min="0"
+                      id="pain"
+                      type="number"
+                    />
+                    <button
+                      class="btn btn-outline-success ml-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 border border-success">
+                <img
+                  src="{% static 'images/moushoirs.jpg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">moushoirs</h5>
+                  <small>mettre dans le sachet carboné</small> 
+
+                  <div class="input-group-outline d-flex align-items-center">
+                    <button
+                      class="btn btn-outline-success mr-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                    >
+                      -
+                    </button>
+                    <input
+                      value="0"
+                      class="form-control border border-success mb-3"
+                      style="text-align: center"
+                      min="0"
+                      id="moushoirs"
+                      type="number"
+                    />
+                    <button
+                      class="btn btn-outline-success ml-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 border border-success">
+                <img
+                  src="{% static 'images/coquilles.jpg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">coquilles</h5>
+                  <small>mettre dans le sachet carboné</small> 
+
+                  <div class="input-group-outline d-flex align-items-center">
+                    <button
+                      class="btn btn-outline-success mr-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                    >
+                      -
+                    </button>
+                    <input
+                      value="0"
+                      class="form-control border border-success mb-3"
+                      style="text-align: center"
+                      min="0"
+                      id="coquilles"
+                      type="number"
+                    />
+                    <button
+                      class="btn btn-outline-success ml-2"
+                      type="button"
+                      onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center">
+            <br />
+            <button
+              class="btn btn-outline-success my-2 my-sm-0 h3"
+              type="submit"
+              id="calculate-quantity"
+            >
+              Suivant
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="container-fluid">
+        <form
+          method="POST"
+          class="overflow-hidden"
+          id="demande"
+          style="display: none"
+        >
+          {% csrf_token %}
+          <div class="row row-cols-0 row-cols-md-3 g-2">
+            <div class="col">
+              <div class="card mh-100 border border-success">
+                
+                <img
+                  src="{% static 'images/sachet_carbone.jpg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <input
+                    style="text-align: center"
+                    id="dechet_carbone"
+                    name="carbone"
+                    class="form-control border border-success"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 border border-success">
+                <img
+                  src="{% static 'images/sachet_azote.jpg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <input
+                    style="text-align: center"
+                    id="dechet_azote"
+                    name="azote"
+                    class="form-control border border-success"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 border border-success">
+                <img
+                  src="{% static 'images/sachet_animaux.jpg'%}"
+                  class="card-img-top"
+                  style="height: 160px"
+                />
+                <div class="card-body">
+                  <input
+                    style="text-align: center"
+                    id="dechet_animaux"
+                    name="animaux"
+                    class="form-control border border-success"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row row-cols-0 row-cols-md-3 g-2 m-3">
+            <div class="card border border-success ">
+              <div class="card-body">
+                <p>
+                  <strong>date de delivrance:</strong>
+                  <input
+                  class="border border-success"
+                    type="date"
+                    id="date"
+                    name="date"
+                    min="2023-01-01"
+                    max="2050-12-31"
+                    required
+                  />
+                  <input
+                  class="border border-success"
+                    type="time"
+                    id="appt"
+                    name="appt"
+                    min="07:00"
+                    max="16:00"
+                    required
+                  />
+                </p>
+              </div>
+            </div>
+            <div class="card border border-success ">
+              <div class="card-body">
+                <p>
+                  <strong
+                    >totale deche:<input
+                    class="border border-success"
+                      style="text-align: center"
+                      name="totale_dechet"
+                      id="totale_dechet"
+                      readonly
+                  /></strong>
+                </p>
+              </div>
+            </div>
+            <div class="card border border-success ">
+              <div class="card-body">
+                <p>
+                  <strong>totale point:</strong
+                  ><input
+                  class="border border-success"
+                    id="totale_point"
+                    name="totale_point"
+                    style="text-align: center"
+                    readonly
+                  />
+                </p>
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="text-center">
+            <div class="arrows">
+              <button
+                class="arrow btn btn-outline-success my-2 my-sm-0 h3"
+                id="go-back"
+              >
+                retourner
+              </button>
+              <button class="arrow btn btn-outline-success my-2 my-sm-0 h3">
+                envoyer
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+    <!--   Core JS Files   -->
+    <script>
+        const CalculateCompostBtn = document.getElementById("calculate-quantity");
+        const QuantityForm = document.getElementById("quantity-form");
+        const demande = document.getElementById("demande");
+
+        const goBack = document.getElementById("go-back");
+
+        let viande = parseFloat(document.getElementById("viande").value) || 0;
+        let fruits = parseFloat(document.getElementById("fruits").value) || 0;
+        let fumier = parseFloat(document.getElementById("fumier").value) || 0;
+        let vegetaux = parseFloat(document.getElementById("vegetaux").value) || 0;
+        let fleurs = parseFloat(document.getElementById("fleurs").value) || 0;
+        let feuilles = parseFloat(document.getElementById("feuilles").value) || 0;
+        let filtre_cafe =
+          parseFloat(document.getElementById("filtre_cafe").value) || 0;
+        let pain = parseFloat(document.getElementById("pain").value) || 0;
+        let moushoirs = parseFloat(document.getElementById("moushoirs").value) || 0;
+        let coquilles = parseFloat(document.getElementById("coquilles").value) || 0;
+        let dechet_animaux = 0;
+        let dechet_azote = 0;
+        let dechet_carbone = 0;
+        let totale_dechet = 0;
+
+        QuantityForm.addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent form submission and page refresh
+          
+          viande = parseFloat(document.getElementById("viande").value);
+          fumier = parseFloat(document.getElementById("fumier").value);
+          fruits = parseFloat(document.getElementById("fruits").value);
+          vegetaux = parseFloat(document.getElementById("vegetaux").value);
+          fleurs = parseFloat(document.getElementById("fleurs").value);
+          feuilles = parseFloat(document.getElementById("feuilles").value);
+          filtre_cafe = parseFloat(document.getElementById("filtre_cafe").value);
+          pain = parseFloat(document.getElementById("pain").value);
+          moushoirs = parseFloat(document.getElementById("moushoirs").value);
+          coquilles = parseFloat(document.getElementById("coquilles").value);
+
+          dechet_animaux = viande + fumier;
+          dechet_azote = fruits + vegetaux + fleurs + feuilles;
+          dechet_carbone = moushoirs + coquilles + pain + filtre_cafe;
+
+          totale_dechet = dechet_animaux + dechet_azote + dechet_carbone;
+          totale_point=10*dechet_azote + 15*dechet_carbone + 20*dechet_animaux
+
+          document.getElementById("dechet_animaux").value = dechet_animaux;
+          document.getElementById("dechet_azote").value = dechet_azote;
+          document.getElementById("dechet_carbone").value = dechet_carbone;
+          document.getElementById("totale_dechet").value = totale_dechet;
+          document.getElementById("totale_point").value = totale_point;
+
+          QuantityForm.style.display = "none";
+          demande.style.display = "block";
+
+        });
+
+        goBack.addEventListener("click", function (event) {
+          event.preventDefault();
+          QuantityForm.style.display = "block";
+          demande.style.display = "none";
+        });
+      {% if message %}
+        alert("{{ message }}");
+      {% endif %}
+      
+      
+    </script>
+    <script src="{% static 'bootstrap-5.2.3-dist/js/bootstrap.bundle.js' %}"></script>
+    <script src="{% static 'js/js/plugins/perfect-scrollbar.min.js' %}"></script>
+    <script src="{% static 'js/js/material-dashboard.min.js' %}"></script>
+  </body>
+</html>
