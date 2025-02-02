@@ -7,6 +7,17 @@
 - `pip`
 - `virtualenv` or `pyenv-virtualenv`
 
+## IF USING WINDOWS 
+- If you are using windows you might need to add this code to the settings.py in the comp folder :
+```bash
+#GDAL_LIBRARY_PATH = r'C:\\OSGeo4W\\bin\\gdal306.dll'
+#GEOS_LIBRARY_PATH = r'C:\\OSGeo4W\\bin\\geos_c.dll'
+if os.name == 'nt':
+    VENV_BASE = os.environ['VIRTUAL_ENV']
+    os.environ['PATH'] = os.path.join(VENV_BASE, 'Lib\\site-packages\\osgeo') + ';' + os.environ['PATH']
+    os.environ['PROJ_LIB'] = os.path.join(VENV_BASE, 'Lib\\site-packages\\osgeo\\data\\proj')  
+```
+
 ## Installation Steps
 
 ### 1. Create a Virtual Environment
